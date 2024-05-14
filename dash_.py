@@ -42,14 +42,36 @@ def process_output(output, notebook_file):
 
 # Function to extract performance metrics from the notebook output
 def extract_metrics(output, accuracy_metric, precision_metric, recall_metric, f1_metric):
-    # Implement your logic to extract the relevant metrics from the notebook output
-    # For demonstration purposes, let's assume it returns dummy data
-    return {
-        accuracy_metric: [0.8, 0.9, 0.7],
-        precision_metric: [0.75, 0.85, 0.65],
-        recall_metric: [0.82, 0.88, 0.72],
-        f1_metric: [0.78, 0.86, 0.68]
+    # Initialize variables to store the extracted metrics
+    accuracy_values = []
+    precision_values = []
+    recall_values = []
+    f1_scores = []
+
+    # Iterate through each cell in the notebook output
+    for cell in output.cells:
+        # Check if the cell contains code
+        if cell.cell_type == 'code':
+            # Extract the relevant lines of code that contain the metrics
+            for line in cell.source.split('\n'):
+                if accuracy_metric in line and 'accuracy' in line:
+                    accuracy_values.append(float(line.split(accuracy_metric)[1].strip()))
+                elif precision_metric in line and 'precision' in line:
+                    precision_values.append(float(line.split(precision_metric)[1].strip()))
+                elif recall_metric in line and 'recall' in line:
+                    recall_values.append(float(line.split(recall_metric)[1].strip()))
+                elif f1_metric in line and 'f1-score' in line:
+                    f1_scores.append(float(line.split(f1_metric)[1].strip()))
+
+    # Create a dictionary to store the extracted metrics
+    metrics = {
+        'accuracy': accuracy_values,
+        'precision': precision_values,
+        'recall': recall_values,
+        'f1-score': f1_scores
     }
+
+    return metrics
 
 # Function to create a Plotly figure for performance metrics
 def create_metrics_figure(metrics_data, title):
